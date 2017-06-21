@@ -23,3 +23,11 @@ larger_length_df.head()
 
 ### Group by categorical variable and compute summary statistics
 iris.groupby('Species').mean()
+
+### Split into two sets
+test_idx = np.random.randint(0, iris.shape[0] + 1, iris.shape[0] / 5.)
+testing  = iris.iloc[test_idx]
+testing.head()
+
+training = iris.iloc[~test_idx]
+training.head()
