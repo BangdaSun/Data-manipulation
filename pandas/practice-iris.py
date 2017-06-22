@@ -21,9 +21,6 @@ larger_length = np.logical_and(iris['Sepal.Length'] > 5.8, iris['Petal.Length'] 
 larger_length_df = iris[larger_length]
 larger_length_df.head()
 
-### Group by categorical variable and compute summary statistics
-iris.groupby('Species').mean()
-
 ### Split into two sets
 test_idx = np.random.randint(0, iris.shape[0] + 1, iris.shape[0] / 5.)
 testing  = iris.iloc[test_idx]
@@ -31,3 +28,19 @@ testing.head()
 
 training = iris.iloc[~test_idx]
 training.head()
+
+### Summary training and testing set
+### Group by categorical variable and compute summary statistics
+training.groupby('Species').count()
+iris.groupby('Species').mean()
+
+### Add columns: ratio of length and width
+training['Sepal.Ratio'] = training['Sepal.Length'] / training['Sepal.Width']
+training['Petal.Ratio'] = training['Petal.Length'] / training['Petal.Width']
+training.head()
+
+### Quick plot: scatte plot (with group by)
+training.groupby('Species').plot(kind = 'scatter', x = 'Petal.Length', y = 'Petal.Width')
+
+### Quick plot: histogram (with group by)
+training.groupby('Species')['Petal.Width'].plot(kind = 'hist', alpha = .2, bins = 20)
