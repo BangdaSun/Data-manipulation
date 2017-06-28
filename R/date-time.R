@@ -7,7 +7,7 @@
 #   default: year with 4 digits - month - day with - or /
 
 as.Date("2017-06-05")
-as.Date("6/5/2017", format = "%m/%d/%Y")
+as.Date("6/5/2017", format = "%m/%d/%Y")  # format = ... means the form of character we input
 as.Date("June 5, 2017", format = "%B %d, %Y")
 as.Date("5JUN17", format = "%d%b%y")
 
