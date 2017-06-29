@@ -65,3 +65,10 @@ difftime(b1, b2, units = "mins")
 #   generate time index sequence
 seq(as.Date("2016-09-06"), by = "days", length = 10)
 seq(as.Date("2016-09-06"), by = "weeks", length = 20)
+
+#   get date one week ago
+d = as.Date('2017-06-29')
+seq(d - 7, d - 1, by = 'weeks')
+
+#   get date one week later
+seq(d, by = 'weeks', length = 2)[2]
