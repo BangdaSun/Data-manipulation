@@ -2,6 +2,10 @@
 ### Chapter 4. Date and Time ###
 ################################
 
+### Get current date and time
+Sys.Date()
+Sys.time()
+
 ### 4.1 as.Date (Date only)
 #   format = ...
 #   default: year with 4 digits - month - day with - or /
