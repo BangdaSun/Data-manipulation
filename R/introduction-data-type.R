@@ -1,56 +1,40 @@
-#########################
-### Chapter 5. Factor ###
-#########################
+############################
+### Chapter 1. Data in R ###
+############################
 
-### 5.1 Intro
-#   factor is stored as integer vector in R
-#   with a corresponding set of character values to use when factor is displayer
+### 1.1 Mode and Class
+#   mode() and class() are two main properties of data in R, (typeof() is also used)
+#   for single data (usually in vector), there could be: numeric, character, logical
+#   for data set, like matrix, list, data frame, we will meet other modes and classes
 
-data  = c(1, 2, 2, 3, 1, 2, 3, 3, 1, 2, 3, 3, 1)
+mylist = list(
+  num  = c(1, 1, 2, 3, 5, 8),
+  char = c("A", "B", "c", "d"),
+  logi = c(TRUE, FALSE),
+  lst  = list(a = c(1, 1, 2), b = c("a", "b", "c")),
+  mat  = matrix(c(1:8), nrow = 4, ncol = 2),
+  df   = data.frame(id = c(1:4), grade = c(90, 94, 95, 88))
+)
+# Check mode and class
+sapply(mylist, mode)
+sapply(mylist, class)
+sapply(mylist, typeof)
 
-fdata = factor(data)
-levels(fdata)
-nlevels(fdata)
+### 1.2 Data storage
 
-rdata = factor(data, labels = c("I", "II", "III"))
-rdata
+### 1.3 Check mode and class 
 
-#   we can also change the label of fdata by levels function
-#   levels function is like names function for vector
-levels(fdata) = c("I", "II", "III")
-fdata
+### 1.4 Check structure of object
 
-#   ordered level
-ofdata = factor(data, order = TRUE)
-ofdata
+### 1.5 Convert object
 
-#   factors represent a efficient way to store character values,
-#   where each character will be stored only once, and the data
-#   itslef is stored as a vector of integers
-#   Therefore, read.table() will automatically convert character
-#   variable into factors. We can use as.is = TRUE to avoid this
+### 1.6 Missing value
 
-### 5.2 Numeric factor
+### 1.7 Dealing with missing value
+#   many statistical aggregate function has a param: na.rm = TRUE to deal with NA values,
+#   if the function has no such param, we can use is.na() to identify the NA values
 
-### 5.3 Manipulate factor
-#   when subset factor data, the level will remain, may cause some problems
-lets = sample(letters, size = 100, replace = TRUE)
-lets = factor(lets)
-table(lets[1:5])
+#   some modeling function like lm(), glm() has a param na.action = ..., we can specify 
+#   functions to apply on data before modeling on data
 
-#   when combine factor variables, we need convert it back to original form:
-#   use levels function
-levels(lets)[lets]
-
-### 5.4 Create factor based on continuous variable
-#   we can use cut function with breaks = ... param
-#   cut function will return factor class
-
-#   example: 
-#   create three equally divided intervals
-#   add labels
-#   divide based on quantile
-height = rnorm(20, mean = 100, sd = 10)
-cut(height, 3)
-cut(height, 3, labels = c('low', 'medium', 'high'))
-cut(height, quantile(height, (0:4) / 4))
+#   na.omit is also a useful choice.
