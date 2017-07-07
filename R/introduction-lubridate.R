@@ -34,7 +34,10 @@ second(go.work)
 hour(go.work)
 year(go.work)
 month(go.work)
+week(go.work)
 day(go.work)
+wday(go.work)  # --> return number of days in one week: Fri is 6th; use label = TRUE to get Frid (factor)
+yday(go.work)  # --> return number of days in that year
 with_tz(go.work)
 
 #   gonna late...
@@ -64,14 +67,15 @@ leap_year(2017)
 dminutes(2)
 dyears(1)
 
-years(1)  # another format
-days(1:2)
+#   create period object, notice the difference with functions like year(), day() (they apply on date object)
+years(1)
+days(1:2)  # those result can be applied on date objects
 
 #   calculate time interval to be time units
 stay.together <- interval(ymd('20170706'), ymd('20141210'))
 stay.together / ddays(1)  # -> number of days
 
-#   %/%, %% operator
+#   %/%, %%, %--% operator
 
 #   as.period
 as.period(stay.together)
