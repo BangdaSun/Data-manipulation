@@ -14,6 +14,7 @@ library(lubridate)
 
 ### Parsing dates and times
 #   no need specify like format = ... in as.Date
+#   but for format like 20170707 08:00, h should be two digits
 
 today <- ymd('20170706')
 today
@@ -45,3 +46,32 @@ go.work
 working <- interval(go.work, go.home)
 working
 class(working)  # interval object in lubridate
+
+
+eating <- ymd_hm('2017-07-07 13:00', tz = 'America/New_York') - ymd_hm('2017-07-07 12:30', tz = 'America/New_York')
+eating.interval <- interval(ymd_hm('2017-07-07 13:00', tz = 'America/New_York'),
+                            ymd_hm('2017-07-07 12:30', tz = 'America/New_York'))
+
+#   check if two time interval overlaps
+int_overlaps(eating.interval, working)
+ymd_hm('20170708 06:00') %within% working
+
+### Arithemtics
+#   check if 2017 is leap year
+leap_year(2017)
+
+#   durations
+dminutes(2)
+dyears(1)
+
+years(1)  # another format
+days(1:2)
+
+#   calculate time interval to be time units
+stay.together <- interval(ymd('20170706'), ymd('20141210'))
+stay.together / ddays(1)  # -> number of days
+
+#   %/%, %% operator
+
+#   as.period
+as.period(stay.together)
