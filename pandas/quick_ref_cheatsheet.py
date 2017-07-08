@@ -139,6 +139,10 @@ new
 df['F'] = new
 df
 
+#   add one row to the DataFrame
+new_row = df[2]
+df.append(new_row)
+
 #   update value
 df.at[dates[0], 'A'] = 0
 df.iat[0, 1] = 2
@@ -159,22 +163,53 @@ pd.isnull(df)
 
 
 ### Calculation ---------------------------------------------------------------
+#   missing data / non-numeric won't be included
+df2.mean()  # default by column
+df2.C.mean()
+df2.mean(1)  # by row
+df.loc[:, ['C', 'D']].mean()
+
+s.value_counts()  # value count
+#   str method .str.method()
 
 
 ### Apply functions -----------------------------------------------------------
+#   default by column
+df2.apply(np.max)
 
 
 ### Combine -------------------------------------------------------------------
 #   concat
+#   concat - like rbind() and cbind() in R
+df3 = pd.DataFrame(np.random.randn(10, 4))
+pieces = [df3[:3], df3[3:7], df3[7:]]  # --> concate pieces[0], pieces[1], pieces[2]
 
-#   join
+pd.concat(pieces)
 
-#   append
+#   join - like merge in R
+#   by key
+left_df = pd.DataFrame({'key': [1001, 2001, 1002, 1005],
+                        'x': [2, 3, 1, 4],
+                        'y': [3, 2, 1, 5]})
+    
+right_df = pd.DataFrame({'key': [1002, 1006, 1003],
+                         'z': [2, 2, 3]})
+
+pd.merge(left_df, right_df, on = 'key')
+
 
 ### Groupby -------------------------------------------------------------------
+df5 = pd.DataFrame({'A': ['foo', 'bar', 'foo', 'bar', 
+                          'foo', 'bar', 'foo', 'bar'],
+                   'B' : ['one', 'one', 'two', 'three', 
+                          'two', 'two', 'one', 'three'],
+                   'C' : np.random.randn(8),
+                   'D' : np.random.randn(8)})
+
+df5.groupby('A').mean()
 
 
-### Transformation ------------------------------------------------------------
+### Reshape -------------------------------------------------------------------
 #   stack
 
 
@@ -182,6 +217,13 @@ pd.isnull(df)
 
 
 ### Time series ---------------------------------------------------------------
+#   create time indexed data
+rng = pd.date_range('2017-01-01', periods = 190, freq = 'D')
+ts  = pd.Series(np.random.randint(0, 1000, len(rng)), index = rng)
+ts.head()
+
+#   resample
+ts.resample('M', how = 'mean')
 
 
 ### Categorical ---------------------------------------------------------------
