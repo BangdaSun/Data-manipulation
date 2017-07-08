@@ -1,0 +1,263 @@
+---
+title: "Week1_Reading Data"
+author: "Bangda Sun"
+date: "October 9, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### 1. Reading from MySQL
+Free and widely used open source database; widely used in internet based app; data structured in: databases, table within databases, fields(column?) within tables. Each row is called a record.
+
+example: http://dev.mysql.com/doc/employee/en/sakila-structure.html
+
+#### Step 1-Install MySQL
+http://dev.mysql.com/doc/refman/5.7/en/installing.html
+
+#### Step 2-Install RMySQL
+On windows: official instructions-http://biostat.mc.vanderbilt.edu/wiki/Main/RMySQL
+Potentially useful guide: http://www.ahschulz.de/2013/07/23/installing-rmysql-under-windows/
+
+
+#### Example - UCSC database
+http://genome.ucsc.edu/
+http://genome.ucsc.edu/goldenPath/help/mysql.html
+
+```{r}
+library(RMySQL)
+# open connection
+ucscDb <- dbConnect(MySQL(), user = "genome",
+                    host = "genome-mysql.cse.ucsc.edu")
+# query: show databases is a mysql command
+result <- dbGetQuery(ucscDb, "show databases;");
+# important: disconnect 
+dbDisconnect(ucscDb);
+result[1:10,]
+```
+
+#### Connecting to hg19 (database name) and listing table
+```{r}
+hg19 <- dbConnect(MySQL(), user = "genome", db = "hg19",
+                  host = "genome-mysql.cse.ucsc.edu")
+allTables <- dbListTables(hg19)
+length(allTables)
+# first 10 tables
+allTables[1:10]
+```
+
+#### Get dimensions of a specific table
+```{r}
+dbListFields(hg19, "affyU133Plus2") # list fields in table: affyU133Plus2
+# how many different rows/records in the dataset?
+dbGetQuery(hg19, "select count(*) from affyU133Plus2")
+```
+
+#### Read from the table
+```{r, warning = FALSE}
+affyData <- dbReadTable(hg19, "affyU133Plus2")
+head(affyData)
+```
+
+#### Select a specific subset
+```{r, warning = FALSE}
+query <- dbSendQuery(hg19, "select * from affyU133Plus2 where misMatches between 1 and 3")
+affyMis <- fetch(query); quantile(affyMis$Matches)
+# top 10 records, get a smmall dataset. and clear the query
+affyMisSmall <- fetch(query, n = 10); dbClearResult(query)
+dim(affyMisSmall)
+```
+
+#### Don't forget to close the connection!
+```{r}
+dbDisconnect(hg19)
+```
+
+#### Further resources
+RMySQL vignette: http://cran.r-project.org/web/packages/RMySQL/RMySQL.pdf
+List of commands: http://www.pantz.org/software/mysql/mysqlcommands.html. Do not, do not, delete, add or join things from ensemble. Only select. In general be careful with mySQL commands
+A nice blog post summarizing some other commands: http://www.r-bloggers.com/mysql-and-r/
+
+### 2. Reading from HDF5
+Used for storing large data sets; support storing a range of data types; heirarchical data format; groups containing zero or more data sets and metadata(have a group header with group name and list of attributes; have a group symbol table with a list of objects in group); datasets multidimensional array of data elements with metadata(have a header with name, datatype, dataspace, and storage layout; have a data array with the data)
+http://www.hdfgroup.org/
+
+#### R HDF5 package
+```
+source("http://bioconductor.org/biocLite.R")
+# rhdf5 pacakge
+biocLite("rhdf5")
+```
+```{r}
+library(rhdf5)
+created = h5createFile("example.h5")
+created
+```
+This whill install packages from Bioconductor http://bioconductor.org/, primarily used genomics but also has good "big data" packages.
+Can be used to interface with hdf5 data sets.
+
+#### Create groups
+```{r}
+created <- h5createGroup("example.h5", "foo")
+created <- h5createGroup("example.h5", "baa")
+created <- h5createGroup("example.h5", "foo/foobaa")
+h5ls("example.h5")
+```
+
+#### Write to groups
+```{r}
+A <- matrix(1:10, nrow = 5, ncol = 2)
+h5write(A, "example.h5", "foo/A")
+B = array(seq(0.1, 2.0, by = .1), dim = c(5, 2, 2))
+attr(B, "scale") <- "liter"
+h5write(B, "example.h5", "foo/foobaa/B")
+h5ls("example.h5")
+```
+
+#### Write a data set
+```{r}
+#df <- data.frame(1L:5L, seq(0, 1, length.out = 5), c("ab", "cde", "fghi", "a", "s"), stringsAsFactors = FALSE)
+#h5write(df, "example.h5", "df")
+#h5ls("example.h5")
+```
+
+#### Reading data
+```{r}
+readA  <- h5read("example.h5", "foo/A")
+readB  <- h5read("example.h5", "foo/foobaa/B")
+readdf <- h5read("example.h5", "df")
+readA
+readB
+readdf
+```
+
+#### Writing and reading chunks
+```{r}
+# write into A[1:3, 1]
+h5write(c(12, 13, 14), "example.h5", "foo/A", index = list(1:3, 1))
+h5read("example.h5", "foo/A")
+```
+
+#### Notes
+hdf5 can be used to optimize reading/writing from disc in R.
+
+### 3. Reading data from the web
+extracting data from the HTML code of website.
+#### Example
+http://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en
+
+#### Getting data off webpages - readLines()
+```{r}
+con <- url("http://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en")
+htmlCode <- readLines(con)
+close(con)
+htmlCode
+```
+
+#### Parsing with XML
+```{r}
+library(XML)
+url <- "http://scholar.google.com/citations?user=HI-I6C0AAAAJ&hl=en"
+html <- htmlTreeParse(url, useInternalNodes = TRUE)
+xpathSApply(html, "//title", xmlValue)
+xpathSApply(html, "//td[@id='col-citedby']", xmlValue) # nothing comes out...
+```
+
+#### Get from the httr package
+```{r}
+library(httr)
+# take the same url as before
+html2 <- GET(url)
+# extract the content as text string
+content2 <- content(html2, as = "text")
+# parse command
+parsedHtml <- htmlParse(content2, asText = TRUE)
+# extract the title
+xpathSApply(parsedHtml, "//title", xmlValue)
+```
+
+#### Accessing websites with passwords
+```{r}
+pg2 <- GET("http://httpbin.org/basic-auth/user/passwd", authenticate("user", "passwd"))
+pg2
+names(pg2)
+```
+
+#### Using handles
+```{r}
+google <- handle("http://google.com")
+# go get path
+pg1 <- GET(handle = google, path = "/")
+pg2 <- GET(handle = google, path = "search")
+```
+
+### 4. Reading from the APIs
+Applications programming interfaces
+http://dev.twitter.com/docs/api1/get/blocks/blocking
+
+#### Creating an application
+https://dev.twitter.com/apps)
+
+#### Accessing Twitter from R
+```{r}
+# oauth_app() is in the library httr
+myapp <- oauth_app("twitter",
+                   key = "yourConsumerKeyHere", secret = "yourConsumeSecretHere")
+# sign in using token
+sig <- sign_oauth1.0(myapp, token = "yourTokenHere", token_secret = "yourTokenSecretHere")
+# GET command, using a specific url. get json file
+homeTL <- GET("https://api.twitter.com/1.1/statuses/home_timeline.json", sig)
+```
+
+#### Converting the json object
+```{r}
+json1 <- content(homeTL)
+library(jsonlite)
+json2 <- jsonlite::fromJSON(toJSON(json1))
+json2 # wrong result here
+```
+
+#### How did I know what url to use?
+https://dev.twitter.com/docs/api/1.1/get/search/tweets
+
+### 5. Reading from Other Sources
+
+In general the best way to find out if the R package exist is to google "data storagr mechanism R package", for example: "MySQL R package".
+
+#### Interacting more directly with files
+`file` - open a connection to a text file
+`url` - open a connection to a url
+`gzfile` - open a connection to a .gz file
+`bzfile` - open a connection to a .bz file
+?connections for more info, and REMEMBER TO CLOSE CONNECTIONS!!
+
+#### Foreign package
+Loads data from Minitab, S, SAS, SPSS, Stata, Systat. Basic function `read.foo()`; `read.arff()` for Weka; `read.dta()` for Stata; `read.mtp()` for Minitab; `read.octave()` for Octave; `read.spss()` for SPSS; `read.xport()` for SAS.
+
+#### Examples of other database packages
+RPostresSQL; RODBC; RMongo.
+
+#### Reading GIS data
+rdgal; rgeos; raster.
+
+#### Reading music data
+tuneR; seewave.
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

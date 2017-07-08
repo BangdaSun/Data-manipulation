@@ -1,0 +1,104 @@
+obtaining data motivation#########################################################
+this course cover:
+1. finding and extracting raw data
+2. tidy data principles and how to make it tidy
+3. practical implementation through a range of R packages
+
+realworld data:  fast cue file
+http://brainknaus.com/software/srtoolbox/s_4_1_sequence80.txt
+
+api/JOSN format data
+https://dev.twitter.com/docs.api/1/get/blocks/blocking
+
+free text structure
+http://blue-button.github.com/challenge/
+
+mySQL/MongoDB
+http://rickosborne.org/blog/2010/02/infographic-migrating-from-sql-to-mapreduce-with-mongodb/
+
+other website
+https://data.baltimorecity.gov/
+
+the goral of this course
+raw data  -> processing script -> tidy data -> (data analysis)  -> (data communciation)
+
+raw and process data##################################################################
+"data are values of qualitative or quantitative variable, belonging to a set of items" from wiki
+qualitative: country of origin, sex, treatment
+quantitative: height, weight, blood pressure
+
+raw data vs processed data
+raw data
+1. the original source of the data
+2. ofter hard to used for data analysis
+3. data analysis includes data processing
+4. raw data may only need to be processed once
+
+processed data
+1. data that is ready for analysis
+2. processing data include merging, subsetting, transforming, etc
+3. there may be standards for processing
+4. all steps should be recorded
+
+example
+http://www.illumina.com.cn/support/sequencing/sequencing_instruments/hiseq_1000.asp
+
+example of a processing pipeline
+http://www.cbcb.umd.edu/~hcorrada/CMSC858B/lectures/lect22_seqIntro/seqIntro.pdf
+
+the components of tidy data#######################################################
+four things you should have 
+1. the raw data
+2. a tidy data
+3. a codebook describing each variables and its values in the tidy data set
+4. an explicit and exact recipe you used to go from step 1 to step 2&3
+
+the raw data
+1. the strand binary file your measurement machine spits out
+2. the unformatted excel file with 10 worksheets the company you contracted with sent you
+3. the complicated JSON data you got from scraping the Twitter API
+4. the hand-enter numbers you collected looking through a microscope
+
+you know the raw data is in the right format if you
+1. ran no software on the data
+2. did not manipulate any of the numbers of data
+3. you did not remove any data from the data set
+4. you did not summarize the data in any way
+
+https://github.com/jtleek/datasharing
+
+th tidy data
+1. each variable you measure should be in one column
+2. each different obs of that variable should be in a different row
+3. there should one table for each "kind" of variable
+4. if you have multiple tables, they should include a column in the table that allows them to be linked
+
+some other importants tips
+1. include a row at the top of each file with variable names
+2. make variable names human readable AgeAtDiagnosis instead of AgeDx
+3. in general data should be save in one file per table
+
+https://github.com/jtleek/datasharing
+
+the code book
+1. info about the variables (including units) in the data set not contained in the tidy data
+2. info about the summary choices you made
+3. info about the experimental study design you used
+
+some other important tips
+1. a common format for this document is a word/text file, markerdown
+2. there should be a section called "study design" that has a thorough description of how you collected the data
+3. there must be a section called "code book" that describes each variable and its units
+
+the instruction list
+1. ideally a computer script in R/Python
+2. the input for the script is the raw data
+3. the output is the processed tidy data
+4. there are no parameters to the script
+
+in some cases it will not be possible to script every step, in that case you shold provide instructions like:
+1. step 1 - take the raw file, run version 3.1.2 of summarize software with parameters a = 1, b = 2, c = 3
+2. step 2 - run the software separately for each sample
+3. step 3 - take column three of outputfile.out for each sample and that is the corresponding row in the output data set
+
+

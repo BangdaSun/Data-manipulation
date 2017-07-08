@@ -1,0 +1,252 @@
+---
+title: "Week1_Reading Data"
+author: "Bangda Sun"
+date: "October 5, 2016"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+### 0. Downloading files
+
+#### Get/Set your working directory. 
+A basic component of working with data is knowing your working directory. Using `getwd()`, `setwd()`. In windows, use backslash,
+```{r}
+setwd("C:\\Users\\Bangda\\Documents")
+```
+
+#### Checking for and creating directories
+`file.exists("directoryName")` will check to see if the directory exists
+`dir.create("directoryName")` will create a directory and creating it if it doesn't exist. Example, checking if there exists a "data" directory
+```
+if (!file.exists("data")){
+  dir.create("data")
+}
+```
+
+#### Getting data from the internet - `download.file()`. Important parameters: url, destfile, method.
+
+Example - Baltimore camera data. https://data-baltimorecity.gov/Transporation/Baltimore.Fixed.Speed.Cameras/dz54-2aru
+```
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile = "C://Users//Bangda//Desktop//Get and Cleaning data in R//Week1//data//Baltimore_Fixed_Speed_Cameras.csv", method = "wininet")
+list.files("C://Users//Bangda//Desktop//Get and Cleaning data in R//Week1")
+dateDownloaded <- date(); dateDownloaded
+```
+
+### 1. Reading Local Files
+Download the file to load
+```{r}
+if (!file.exists("data")){
+  dir.create("data")
+}
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.csv?accessType=DOWNLOAD"
+download.file(fileUrl, destfile = "Baltimore_Fixed_Speed_Cameras.csv", method = "curl")
+dateDownloaded <- date()
+```
+
+Loading flat files - `read.table()`. Reads the data into RAM, big data can cause problem. Important parameters file: header, sep, row.names, nrows. Some more important parameters: quote, na.strings, nrows, skip. Related `read.csv()`, `read.csv2()`. Instructor's experience: the biggest trouble with reading flat files are quotation marks ` or " placed in data values, setting quote = "" ofter resolves these.
+```
+cameraData <- read.table("./data/cameras.csv")
+head(cameraData)
+```
+it will get some errors
+```{r}
+cameraData <- read.table("C://Users//Bangda//Desktop//Get and Cleaning data in R//Week 1//data//Baltimore_Fixed_Speed_Cameras.csv", sep = ",", header = TRUE)
+head(cameraData) # question, why not use read.csv()? comma separated 
+```
+
+### 2. Reading Excel Files
+Require package `xlsx`.
+```{r}
+fileUrl <- "https://data.baltimorecity.gov/api/views/dz54-2aru/rows.xlsx?accessType=DOWNLOAD"
+# download.file(fileUrl, destfile = "Baltimore_Fixed_Speed_Cameras.xlsx")
+# install.packages("xlsx")
+library(xlsx)
+cameraData <- read.xlsx("C://Users//Bangda//Desktop//Get and Cleaning data in R//Week 1//data//Baltimore_Fixed_Speed_Cameras.xlsx", sheetIndex = 1, header = TRUE)
+head(cameraData)
+```
+
+Read specific rows and columns
+```{r}
+colIndex <- 2:3
+rowIndex <- 1:4
+cameraDataSubset <- read.xlsx("C://Users//Bangda//Desktop//Get and Cleaning data in R//Week 1//data//Baltimore_Fixed_Speed_Cameras.xlsx", sheetIndex = 1, colIndex = colIndex, rowIndex = rowIndex)
+cameraDataSubset
+```
+
+`write.xlsx()` will write out an excel file. `read.xlsx2()` is much faster than `read.xlsx()` but for reading subsets of rows may be slightly unstable. **XLConnect** package has more options for writing and manipulating excel file. The **XLConnect vignette** is a good place to start for that package.
+
+In general, .csv and .txt file are recommended as they are easier to distribute.
+
+### 3. Read XML
+
+XML: extensible markup language. Frequently used to store structured data, particularly widely used in internet applications. Extracting XML is the basis for most web scraping. 
+
+Components of XML: Markup-labels that give the text structure; Content-the actual text of the document.
+
+#### Tags, elements and attributes
+```
+Tags correspond to general labels:
+  Start tags <section>
+  End tags </section>
+  Empty tages <line-break />
+
+Elements are specific examples of tags
+  <Greeting> Hello, world </Greeting>
+  
+Attributes are components of the label
+  <img src="jeff.jpg" alt="instructor"/>
+  <step number="3"> Connect A to B. </step>
+```
+
+Example: http://www.w3schools.com/xml/simple.xml
+```{r}
+library(XML)
+fileUrl <- "http://www.w3schools.com/xml/simple.xml"
+doc <- xmlTreeParse(fileUrl, useInternal = TRUE)
+rootNode <- xmlRoot(doc)
+xmlName(rootNode)
+names(rootNode)
+```
+
+#### Access parts of the XML document
+```{r}
+rootNode[[1]]
+rootNode[[1]][[1]]
+```  
+
+#### Programatically extract parts of the file
+```{r}
+xmlSApply(rootNode, xmlValue)
+```
+
+#### XPath
+info from: http://www.stat.berkeley.edu/~statcur/Workshop2/Presentations/XML.pdf
+
+#### Get the items on the menu and prices
+```{r}
+xpathSApply(rootNode, "//name", xmlValue)
+xpathSApply(rootNode, "//price", xmlValue)
+```
+
+#### Another example
+
+http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens
+
+```{r}
+fileUrl <- "http://espn.go.com/nfl/team/_/name/bal/baltimore-ravens"
+doc <- htmlTreeParse(fileUrl, useInternal = TRUE)
+scores <- xpathSApply(doc, "//li[@class='score']", xmlValue)
+teams <- xpathSApply(doc, "//li[@class='team-name']", xmlValue)
+scores
+teams
+```
+
+### 4. Read JSON
+Javascript Object Notation; lightweight data storage; common format for data from application programming interfaces (API); similar structure to XML but different syntax/format.
+
+Data stored as: numbers (double), strings (double quoted), boolean (true or false), array (ordered, comma separated in square brackets[]); object (unordered, comma separated collection of key: value pairs in curley brackets{})
+
+https://api.github.com/users/jtleek/repos
+
+```{r}
+library(jsonlite)
+jsonData <- fromJSON("https://api.github.com/users/jtleek/repos")
+names(jsonData)
+names(jsonData$owner)
+jsonData$owner$login
+```
+
+#### Writing data frames to JSON
+```{r}
+myjson <- toJSON(iris, pretty = TRUE)
+cat(myjson)
+```
+
+#### Convert back to JSON
+```{r}
+iris2 <- fromJSON(myjson)
+head(iris2)
+```
+
+### 5. Using data table
+
+data.table: inherets from data.frame-all functions that accept data.frame work on data.table. Written in C so it is much faster than subsetting, group and updating.
+
+```{r}
+library(data.table)
+DF = data.frame(x = rnorm(9), y = rep(c("a","b","c"), each = 3), z = rnorm(9))
+DT = data.frame(x = rnorm(9), y = rep(c("a","b","c"), each = 3), z = rnorm(9))
+tables()
+# Subsetting
+DT[2,]
+DT[DT$y == "a", ]
+# column subsetting
+DT[c(2, 3)]
+{
+  x = 1
+  y = 2
+}
+k = {print(10); 5}
+print(k)
+# Calculating values for variables with expressions
+# DT[, list(mean(x), sum(z))] with error...
+DT[, table(y)]
+# Adding new columns
+# DT[, w:= z^2] with error...
+# DT2 <- DT
+# DT[,y := 2]
+# head(DT, n = 3)
+# head(DT2, n = 3)
+# Multiple operations
+# DT[, m:={tmp <- (x + z); log2(tmp + 5)}]
+# Plyr like operations
+# DF[, a:= x > 0]
+# DF[, b:= mean(x + w), by = a]
+# Special variables
+# .N An integer, length 1, containing the number r
+# set.seed(123);
+# DT <- data.table(x = sample(letters[1:3], 1E5, TRUE))
+# DT[, .N, by = x] 
+# Keys
+# DT <- data.table(x = rep(c("a", "b", "c"), each = 100), y = rnorm(300))
+# setkey(DT, x)
+# DT('a')
+# Joins
+# DT1 <- data.table(x = c('a', 'a', 'b', 'dt1'), y = 1:4)
+# DT2 <- data.table(x = c('a', 'b', 'dt2'), z = 5:7)
+# setkey(DT1, x); setkey(DT2, x)
+# merge(DT1, DT2)
+# Fast reading
+big_df <- data.frame(x = rnorm(1E6), y = rnorm(1E6))
+file <- tempfile()
+write.table(big_df, file = file, row.names = FALSE, col.names = TRUE, sep = "\t", quote = FALSE)
+system.time(fread(file))
+system.time(read.table(file, header = TRUE, sep = "\t"))
+```
+
+### 6. Practice
+
+#### Install swirl
+```{r}
+# install.packages("swirl")
+# packageVersion("swirl") if there is an old version
+```
+
+#### Load swirl
+```{r}
+library(swirl)
+```
+
+#### Install the getting and clean data course
+```{r}
+install_from_swirl("Getting and Cleaning Data")
+```
+
+```{r}
+# swirl()
+```
+
+
