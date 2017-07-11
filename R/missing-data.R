@@ -54,6 +54,53 @@ dim(sleep)  # each row is a species
 complete.cases(sleep)
 sleep[!complete.cases(sleep), ]
 
+# practice: detect NA in data frame
+# ------------------------------------------------------------------------------
+# test data
+test_df <- data.frame(
+  year = seq(1994, 2017),
+  A    = rnorm(24, mean = 10, sd = 1),
+  B    = runif(24, min = 20, max = 30),
+  C    = rexp(24, rate = 2),
+  D    = rbinom(24, size = 10, prob = .3)
+)
+
+row_idx <- sample(1:nrow(test_df), size = 3, replace = FALSE)
+col_idx <- sample(2:ncol(test_df), size = 4, replace = TRUE)
+
+test_df[row_idx[1], col_idx[2]] <- NA
+test_df[row_idx[2], col_idx[2]] <- NA
+test_df[row_idx[3], col_idx[3]] <- NA
+test_df[row_idx[1], col_idx[1]] <- NA
+test_df[row_idx[3], col_idx[4]] <- NA
+
+# detect obs with NA
+idx <- 1:nrow(test_df)
+idx[!complete.cases(test_df)]
+
+test_df_wna <- test_df[!complete.cases(test_df), ]  # every row has NA
+test_df_wna
+
+# detect locations of NA
+apply(test_df_wna, 1, is.na) %>% 
+  as.numeric() %>% 
+  matrix(ncol = ncol(test_df_wna), byrow = TRUE)
+
+# detect the NA pattern: appear successively
+test_df[2:3, 2] <- NA
+test_df[c(1, 3, 5), 3] <- NA
+test_df[3:9, 4] <- NA
+test_df
+
+successive_na_detect <- function(.data) {
+  lst <- is.na(.data) %>% rle()  # --> doesn't work for NA directly, need is.na()
+  lst$lengths[lst$values]
+}
+
+apply(test_df, 2, successive_na_detect)
+# ------------------------------------------------------------------------------
+
+
 ### Explore the pattern of missing data
 #   1. make a list to show missing data
 #   use md.pattern in mice package
