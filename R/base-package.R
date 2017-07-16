@@ -29,3 +29,29 @@ transform(airquality, new = -Ozone, Temp = (Temp-32)/1.8)
 subset(airquality, Temp > 80, select = c(Ozone, Temp))
 subset(airquality, Day == 1, select = -Temp)
 subset(airquality, select = Ozone:Wind)
+
+   
+library(dplyr)
+airquality <- airquality %>%
+   mutate(Month = factor(Month))
+
+# split()
+airquality_splited <- split(airquality, airquality$Month)  # equivalent to group by
+airquality_splited[[2]]
+
+
+# scale()
+zs <- scale(airquality$Temp, center = TRUE, scale = TRUE)
+df <- data.frame(origin = airquality$Temp, zs = zs)
+library(reshape2)
+library(ggplot2)
+df %>%
+  mutate(id = seq(nrow(df))) %>%
+  melt(id.vars = 'id') %>%
+  ggplot() +
+  geom_histogram(aes(x = value, y = ..density.., fill = variable), col = 'black', bins = 60)
+
+
+# aggregate()
+# aggregate(df, by, fun), by must be a list containing the variables to groupby, and summarize func
+aggregate(airquality[, c('Wind', 'Temp')], by = list(airquality$Month), mean)
