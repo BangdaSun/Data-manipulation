@@ -60,6 +60,9 @@ int_overlaps(eating.interval, working)
 ymd_hm('20170708 06:00') %within% working
 
 ### Arithemtics
+# lubridate allows arithmetic with both relative and exact units by introducing four new time
+# related objects. These are instants, intervals, durations, and periods.
+
 #   check if 2017 is leap year
 leap_year(2017)
 
