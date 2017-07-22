@@ -26,6 +26,19 @@ day
 weekdays(day)
 
 ### 4.2 chron package
+#   format code:
+# +-------+----------------------+
+# +   m   +  month (decimals)    +
+# +   d   +   day (decimals)     +
+# +   y   +  year (4 digits)     +
+# +  mon  +  month (3 letters)   +
+# + month +  month (total name)  +
+# +-------+----------------------+
+# +   h   +        hours         +
+# +   m   +        minutes       +
+# +   s   +        seconds       +
+# +-------+----------------------+
+
 #   if the data has date and time, we need split them first
 library(chron)
 dtimes = "2017-06-05 21:28:40"
@@ -35,11 +48,13 @@ chron(dates = dtparts[[1]][1], times = dtparts[[1]][2],
       format = c("y-m-d", "h:m:s")) # mon, month
 
 ### 4.3 POSIX class
+# POSIX usually for UNIX
+
 #  POSIXct: use second from 1970/01/01 (default in R)
 #  POSIXlt: second, minute, hour, day, month, year as a list
 #  they also work for different time zone
 
-#  valid input for POSIXct:
+#  valid input for POSIXt:
 #  2017/6/5
 #  2017-06-05 21:37
 #  2017/6/5 21:37:55
@@ -49,6 +64,21 @@ dts = c("2005-10-21 18:47:22 EDT",
 as.POSIXct(dts)
 as.POSIXlt(dts)
 
+#  input seconds since 2017-01-01
+dts <- c(1127056501, 1104295502)
+class(dts) <- c('POSIXt', 'POSIXct')
+# or
+structure(dts, class = c('POSIXt', 'POSIXct'))
+
+# strptime(), strftime() for input and output date data
+# format code can refer to page 64 of Phil Spector, Data Manipulation with R
+
+mydate <- strptime('16/Oct/2017:09:01:35', 
+                  format = '%d/%b/%Y:%H:%M:%S')
+# use tz = .. specify time zone
+
+# one more way to create POSIX
+ISOdate(2017, 7, 21, 20, 44, 50, tz = "...")
 
 ### 4.4
 
