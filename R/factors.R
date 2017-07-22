@@ -30,6 +30,8 @@ ofdata
 #   Therefore, read.table() will automatically convert character
 #   variable into factors. We can use as.is = TRUE to avoid this
 
+#   use reorder(), relevel() to re-order the factor level
+
 ### 5.2 Numeric factor
 
 ### 5.3 Manipulate factor
@@ -54,3 +56,19 @@ height = rnorm(20, mean = 100, sd = 10)
 cut(height, 3)
 cut(height, 3, labels = c('low', 'medium', 'high'))
 cut(height, quantile(height, (0:4) / 4))
+
+### 5.5 Factor on date and time
+#   use seq() to create date vector
+all_day <- seq(from = as.Date('2017-01-01'),
+               to = as.Date('2017-12-31'), by = 'day')
+
+#   use format() to extract month
+c_month <- format(all_day, '%b')
+months <- factor(c_month, levels = unique(c_month), order = TRUE)
+table(months)
+
+#   also we can use cut(), breaks = ... to get any interval
+wks <- cut(all_day, breaks = 'week')
+head(wks)
+
+qts <- cut(all_day, '3 months', labels = paste0('Q', 1:4))
