@@ -56,12 +56,12 @@ df <- data.frame(
 df_long <- melt(df, id.vars = c('date'))
 df_long
 
-df_wide <- dcast(df_long, date ~ variable)
+df_wide <- dcast(df_long, date ~ variable)  # variable move to 'columns', date function as key/id
 df_wide
 
 # tidyr - specify variables directly
-df_long <- gather(df, 'type', 'value', 2:4)
+df_long <- gather(df, 'type', 'value', 2:4)  # 'type' and 'value' is variable and value in melt
 df_long
 
-df_wide <- spread(df_long, type, value)
+df_wide <- spread(df_long, type, value)  # similar to dcast, don't need formula format
 df_wide
