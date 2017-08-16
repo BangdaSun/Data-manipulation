@@ -27,16 +27,17 @@ df$state <- fct_recode(df$state,
                        'AR' = 'Arkansas')
 
 # fct_lump() - lump the rarest / most common levels into 'other'
-#     meet this issue in kaggle - Titanic
+# meet this issue in kaggle - Titanic
 df <- rbind(df, df[-1, ])
 df$state <- fct_lump(df$state)
 
-#     also can specify number of levels to keep
+# also can specify number of levels to keep
 df <- rbind(df, df[-1, ], df, df[-2, ])
 df$state %>% table()
 df$state <- fct_lump(df$state, n = 2)
 df$state
 
+## see also
 # fct_relevel()
 # fct_inorder()
 # fct_infreq()
