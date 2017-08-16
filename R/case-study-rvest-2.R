@@ -5,7 +5,7 @@ library(rvest)
 mygit_repo = 'https://github.com/bangdasun?tab=repositories'
 mygit_repo_html = html(mygit_repo)
 
-#   get the repositories' name
+# get the repositories' name
 repo_selector = '.source a'
 repo_name = html_nodes(mygit_repo_html, repo_selector) %>% 
   html_text() %>%
@@ -14,7 +14,7 @@ repo_name = html_nodes(mygit_repo_html, repo_selector) %>%
 
 repo_name
 
-#   get the repositories' info: main language and update info
+# get the repositories' info: main language and update info
 repo_info_selector = '.mt-2'
 repo_info = html_nodes(mygit_repo_html, repo_info_selector) %>%
   html_text() %>%
@@ -32,7 +32,7 @@ repo_info_df = repo_info %>%
   matrix(ncol = 2, byrow = TRUE) %>%
   as.data.frame()
 
-#   combine all info together
+# combine all info together
 my_repo_df = data.frame(repo = repo_name,
                         language = repo_info_df[, 1],
                         update = repo_info_df[, 2]) 
