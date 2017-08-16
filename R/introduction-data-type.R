@@ -31,10 +31,10 @@ sapply(mylist, typeof)
 ### 1.6 Missing value
 
 ### 1.7 Dealing with missing value
-#   many statistical aggregate function has a param: na.rm = TRUE to deal with NA values,
-#   if the function has no such param, we can use is.na() to identify the NA values
+# many statistical aggregate function has a param: na.rm = TRUE to deal with NA values,
+# if the function has no such param, we can use is.na() to identify the NA values
 
-#   some modeling function like lm(), glm() has a param na.action = ..., we can specify 
-#   functions to apply on data before modeling on data
+# some modeling function like lm(), glm() has a param na.action = ..., we can specify 
+# functions to apply on data before modeling on data
 
-#   na.omit is also a useful choice.
+# na.omit(), complete.cases() are also a useful choice
