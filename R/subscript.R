@@ -18,14 +18,14 @@ riris <- iris[rev(1:nrow(iris)), ]  # we see the first index is 150
 
 # drop = FALSE, [[]] and []
 
-#   6.6 Special functions for matrix
+### 6.6 Special functions for matrix
 mat <- matrix(1:25, nrow = 5)
 row(mat)
 col(mat)
 lower.tri(mat)
 upper.tri(mat)
 
-#   6.8 Data frame subscript
+### 6.8 Data frame subscript
 #   when using logical index:
 #     return of [ will contain NA if NA exists;
 #     return of subset() will exclude NA
