@@ -13,8 +13,8 @@ library(lubridate)
 
 
 ### Parsing dates and times
-#   no need specify like format = ... in as.Date
-#   but for format like 20170707 08:00, h should be two digits
+# no need specify like format = ... in as.Date
+# but for format like 20170707 08:00, h should be two digits
 
 today <- ymd('20170706')
 today
@@ -40,7 +40,7 @@ wday(go.work)  # --> return number of days in one week: Fri is 6th; use label = 
 yday(go.work)  # --> return number of days in that year
 with_tz(go.work)
 
-#   gonna late...
+# gonna late...
 minute(go.work) <- 5
 go.work
 
@@ -55,7 +55,7 @@ eating <- ymd_hm('2017-07-07 13:00', tz = 'America/New_York') - ymd_hm('2017-07-
 eating.interval <- interval(ymd_hm('2017-07-07 13:00', tz = 'America/New_York'),
                             ymd_hm('2017-07-07 12:30', tz = 'America/New_York'))
 
-#   check if two time interval overlaps
+# check if two time interval overlaps
 int_overlaps(eating.interval, working)
 ymd_hm('20170708 06:00') %within% working
 
@@ -63,22 +63,22 @@ ymd_hm('20170708 06:00') %within% working
 # lubridate allows arithmetic with both relative and exact units by introducing four new time
 # related objects. These are instants, intervals, durations, and periods.
 
-#   check if 2017 is leap year
+# check if 2017 is leap year
 leap_year(2017)
 
-#   durations
+# durations
 dminutes(2)
 dyears(1)
 
-#   create period object, notice the difference with functions like year(), day() (they apply on date object)
+# create period object, notice the difference with functions like year(), day() (they apply on date object)
 years(1)
 days(1:2)  # those result can be applied on date objects
 
-#   calculate time interval to be time units
+# calculate time interval to be time units
 stay.together <- interval(ymd('20170706'), ymd('20141210'))
 stay.together / ddays(1)  # -> number of days
 
-#   %/%, %%, %--% operator
+# %/%, %%, %--% operator
 
-#   as.period
+# as.period
 as.period(stay.together)
