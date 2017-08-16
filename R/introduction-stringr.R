@@ -21,7 +21,7 @@ myInfo = c('bangda', 'male', 'chinese', 'new york')
 str_length(myName)  # length of string, same as nchar()
 str_length(myInfo)
 
-#   substring
+# substring
 str_sub(myName, 2, 2)
 str_sub(myName, 2)  # default from this position to last one
 str_sub(myName, 2, -2)  # 2nd to 2nd to last
@@ -29,17 +29,17 @@ str_sub(myName, 2, -2)  # 2nd to 2nd to last
 str_sub(myName, 1, 1) = 'B'
 myName
 
-#   str duplicate
+# str duplicate
 str_dup(myName, c(3, 4))
 
 ### 2. Whitespace
-#   pads a string to fixed length by adding extra white space on left / right
+# pads a string to fixed length by adding extra white space on left / right
 str_pad(myInfo, 10, 'left')  # where 10 means total length after adding
 str_pad(myInfo, 8, 'both')
 str_pad(myName, 8, 'both', pad = '$')
 # str_trunc
 
-#   remove white space
+# remove white space
 myName = str_pad(myName, 10, 'left')
 myName
 str_trim(myName)
@@ -88,34 +88,34 @@ strs = c(
   'Work: 579-499-7527; Home: 543.355.3679'
 )
 
-#   pattern
+# pattern
 phone = '([2-9][0-9]{2})[- .]([0-9]{3})[- .]([0-9]{4})'
 
-#   detect pattern => logical vector, like grepl()
+# detect pattern => logical vector, like grepl()
 str_detect(strs, phone)
 
-#   return matched element, like grep()
+# return matched element, like grep()
 str_subset(strs, phone)
 
-#   counts the number of matched
+# counts the number of matched
 str_count(strs, phone)
 
-#   locate the position
+# locate the position
 str_locate(strs, phone)  # like regexpr()
 str_locate_all(strs, phone)  # like gregexpr()
 
-#   extract elements
+# extract elements
 str_extract(strs, phone)
 str_extract_all(strs, phone)
 
-#   match, like regmatches()
+# match, like regmatches()
 
-#   replace
+# replace
 str_replace(strs, phone, 'XXX-XXX-XXXX')
 str_replace_all(strs, phone, 'XXX-XXX-XXXX')
 
-#   split
+# split
 str_split('a-b-c', '-')
 str_split_fixed('a-b-c', '-', n = 2)
 
-#   engines
+# engines
