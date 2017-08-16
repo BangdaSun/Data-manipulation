@@ -1,3 +1,4 @@
+#
 # magrittr
 # 
 # from vignette('magrittr') and http://bradleyboehmke.github.io/tutorials/simplify_code
