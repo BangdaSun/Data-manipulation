@@ -3,9 +3,9 @@
 ############################
 
 ### 1.1 Mode and Class
-#   mode() and class() are two main properties of data in R, (typeof() is also used)
-#   for single data (usually in vector), there could be: numeric, character, logical
-#   for data set, like matrix, list, data frame, we will meet other modes and classes
+# mode() and class() are two main properties of data in R, (typeof() is also used)
+# for single data (usually in vector), there could be: numeric, character, logical
+# for data set, like matrix, list, data frame, we will meet other modes and classes
 
 mylist = list(
   num  = c(1, 1, 2, 3, 5, 8),
@@ -15,7 +15,7 @@ mylist = list(
   mat  = matrix(c(1:8), nrow = 4, ncol = 2),
   df   = data.frame(id = c(1:4), grade = c(90, 94, 95, 88))
 )
-# Check mode and class
+# check mode and class
 sapply(mylist, mode)
 sapply(mylist, class)
 sapply(mylist, typeof)
