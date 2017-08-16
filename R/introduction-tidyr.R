@@ -1,3 +1,4 @@
+#
 # tidyr tutorial
 # Reference:
 #
@@ -9,10 +10,10 @@
 #   (2) each row is an observation
 
 # First: identify variables in the data, then move them into columns
-# tidyr mainly use:
-#   (1) gather(), like melt() in reshape2 package
-#   (2) separate()
-#   (3) spread()
+# three most important functions used:
+# (1) gather(), like melt() in reshape2 package
+# (2) separate()
+# (3) spread()
 
 library(dplyr)
 library(tidyr)
@@ -44,7 +45,8 @@ messydata2 %>%
   gather(key, time, -id, -trt) %>%                        # (data) - key - value - group
   separate(key, into = c("location", "time"), sep = "_")  # separate key
 
-# wide -> long, long -> wide: comparison with reshape2 package
+## wide -> long, long -> wide: comparison with reshape2 package
+# data
 df <- data.frame(
   date = seq(ymd('20170710'), ymd('20170724'), by = 'day'),
   A = rnorm(15),
