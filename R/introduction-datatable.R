@@ -53,18 +53,18 @@ flights[origin == 'JFK' & month == 6L, length(origin)]
 flights[origin == 'JFK' & month == 6L, .N]  # .N
 
 ### Aggregation
-#   group by
+##  group by
 flights[, .(.N, avg_dep_time = mean(dep_time)), by = .(origin, dest)]
 
-#   key by - combine with group by and order by
+##  key by - combine with group by and order by
 flights[carrier == 'AA',
         .(mean(arr_delay), mean(dep_delay)),
         keyby = .(origin, dest)]
 
-#   chaining - DT[...][...]
+##  chaining - DT[...][...]
 flights[carrier == 'AA'][keyby = .(origin, dest)]
 
-#   multiple columns operations .SD, .SDcols
+##  multiple columns operations .SD, .SDcols
 #   -- group by origin and dest, and return the max two dep_delay one in each group
 flights[, head(.SD, 2), by = .(origin, dest)]  # only this way works - chaining doesn't work
 #   -- group by origin and dest, and return the mean of dep_time, dep_delay, arr_delay, air_time 
