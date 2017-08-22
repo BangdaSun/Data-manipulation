@@ -19,12 +19,21 @@ df <- tibble(
 # parse_factor() - convert into factors (from readr pkg)
 df$state <- parse_factor(df$state, levels = df$state)  # must along with levels
 
-# fct_recode() - re-encode factors
+
+# fct_reorder() - re-order the level of the factor
+
+# fct_relevel() - arrange arbitrary, for example move the reference level in front
+
+# in base package we can also use relevel(), reorder(), levels()<- 
+
+
+# fct_recode() - re-encode/modifier factors
 df$state <- fct_recode(df$state,
                        'AL' = 'Alabama',
                        'AK' = 'Alaska',
                        'AZ' = 'Arizona',
                        'AR' = 'Arkansas')
+
 
 # fct_lump() - lump the rarest / most common levels into 'other'
 # meet this issue in kaggle - Titanic
@@ -37,8 +46,11 @@ df$state %>% table()
 df$state <- fct_lump(df$state, n = 2)
 df$state
 
+
+# fct_collapse() - merge levels of factor
+
+
 ## see also
-# fct_relevel()
 # fct_inorder()
 # fct_infreq()
 # fct_rev()
